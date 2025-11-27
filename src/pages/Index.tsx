@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -7,6 +8,25 @@ import Icon from '@/components/ui/icon';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('main');
+  const [username, setUsername] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isAuth = localStorage.getItem('isAuthenticated');
+    const user = localStorage.getItem('username');
+    
+    if (!isAuth) {
+      navigate('/login');
+    } else {
+      setUsername(user || '');
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('username');
+    navigate('/login');
+  };
 
   const news = [
     {
@@ -78,6 +98,20 @@ const Index = () => {
                 <h1 className="text-2xl font-bold">Администрация</h1>
                 <p className="text-sm opacity-90">Районного округа</p>
               </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-white">
+                <Icon name="User" size={20} />
+                <span className="text-sm">{username}</span>
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleLogout}
+              >
+                <Icon name="LogOut" size={18} className="mr-2" />
+                Выход
+              </Button>
             </div>
           </div>
           
